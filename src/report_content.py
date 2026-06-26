@@ -1,0 +1,17 @@
+PROJECT_REPORT = {
+    "Problem Statement": "Manual software engineering artifact creation is time-consuming and inconsistent. Teams need a system that can understand natural-language requirements and generate plans, code, tests, reviews, and documentation with minimal human effort.",
+    "Abstract": "The project presents a Multi-Agent LLM system for autonomous software engineering. It combines NLP, prompt-engineering style reasoning, text classification, task decomposition, code generation, testing, debugging, review, and documentation into one Streamlit application that also works without paid API keys.",
+    "Objectives": "Understand user requirements, extract software features, decompose work into tasks, generate sample Python code, create test cases, identify debugging suggestions, review code quality, produce documentation, and calculate evaluation metrics.",
+    "Introduction": "Large Language Models can support software development by converting natural language into structured engineering outputs. A multi-agent architecture improves clarity by assigning specialized responsibilities to different agents.",
+    "Literature Review": "Prior work in NLP, transformer language models, code generation, and agent-based systems shows that specialized reasoning stages can improve output completeness and traceability compared with a single monolithic response.",
+    "Proposed System": "The proposed system uses local NLP and deterministic LLM-style agents to process software requirements offline. Optional external LLMs can be connected later, but the core demo remains reliable without API keys.",
+    "System Architecture": "The architecture contains a Streamlit UI, Requirement NLP layer, Agent Orchestrator, Evaluation Engine, sample dataset, and SQLite run history.",
+    "Methodology": "The workflow uses TF-IDF feature extraction, Naive Bayes domain classification, cosine-similarity dataset matching, task decomposition, template-guided code generation, static review, and metric scoring.",
+    "Algorithms Used": "TF-IDF vectorization, Multinomial Naive Bayes classification, cosine similarity, rule-based information extraction, multi-agent task decomposition, and syntax-based code evaluation.",
+    "Implementation Details": "Python modules are separated into agents, NLP pipeline, evaluation, storage, and report content. Streamlit pages present the project workflow and final outputs.",
+    "Result Analysis": "The system reports accuracy, completeness, relevance, code quality, readability, and task completion scores using transparent demo metrics.",
+    "Advantages": "Works offline, requires no paid API key, presents clear agent roles, stores run history, and produces complete project artifacts for demonstration.",
+    "Limitations": "Generated code is sample-level and should be reviewed before production use. Real-world deployment requires authentication, persistent business data models, and stronger testing.",
+    "Future Scope": "Future work can add OpenAI/Hugging Face model integration, RAG over project files, GitHub automation, CI execution, advanced static analysis, and deployment pipelines.",
+    "Conclusion": "The project demonstrates how Machine Learning, NLP, LLM reasoning, and multi-agent collaboration can automate major software engineering tasks in a reliable final-year project format.",
+}
