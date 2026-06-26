@@ -4,6 +4,8 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from src.code_sandbox import run_generated_code_checks
+from src.llm_provider import LLMProvider, ProviderName
 from src.ml_pipeline import RequirementNLP
 
 
@@ -16,23 +18,27 @@ class AgentResult:
 
 
 class MultiAgentSoftwareEngineer:
-    def __init__(self) -> None:
+    def __init__(self, provider: ProviderName = "Local Mock LLM") -> None:
         self.nlp = RequirementNLP()
+        self.llm = LLMProvider(provider)
 
     def run(self, requirement: str) -> dict[str, Any]:
         analysis = self.requirement_analysis(requirement)
         plan = self.task_planning(requirement, analysis)
         code = self.code_generation(requirement, analysis, plan)
         tests = self.testing(requirement, analysis, code)
+        execution = run_generated_code_checks(code)
         debugging = self.debugging(code)
         review = self.code_review(code)
         docs = self.documentation(requirement, analysis, plan, code, tests)
         return {
             "requirement": requirement,
+            "llm_provider": self.llm.status(),
             "analysis": analysis,
             "plan": plan,
             "code": code,
             "tests": tests,
+            "execution": execution,
             "debugging": debugging,
             "review": review,
             "documentation": docs,
@@ -43,7 +49,7 @@ class MultiAgentSoftwareEngineer:
             AgentResult("Requirement Analysis Agent", "NLP extraction and domain classification", "Completed", result["analysis"]),
             AgentResult("Task Planning Agent", "Task decomposition and sprint planning", "Completed", result["plan"]),
             AgentResult("Code Generation Agent", "Template-based local LLM style generation", "Completed", {"language": "Python", "lines": len(result["code"].splitlines())}),
-            AgentResult("Testing Agent", "Functional and validation test generation", "Completed", {"test_count": len(result["tests"])}),
+            AgentResult("Testing Agent", "Functional, validation, and generated-code smoke checks", "Completed", {"test_count": len(result["tests"]), "execution": result["execution"]}),
             AgentResult("Debugging Agent", "Static issue detection and fix suggestions", "Completed", result["debugging"]),
             AgentResult("Code Review Agent", "Quality, security, readability review", "Completed", result["review"]),
             AgentResult("Documentation Agent", "README and module explanation generation", "Completed", {"sections": list(result["documentation"].keys())}),
@@ -55,9 +61,17 @@ class MultiAgentSoftwareEngineer:
         domain = self.nlp.classify_domain(requirement)
         match = self.nlp.find_closest_requirement(requirement)
         features = self._derive_features(requirement, keywords, entities)
+        prompt = (
+            "Summarize this software requirement in one professional sentence and mention its main software goal:\n"
+            f"{requirement}"
+        )
+        llm_summary = self.llm.generate(prompt, self._summarize_requirement(requirement))
         modules = [f"{feature.title()} Module" for feature in features[:5]]
         return {
             "summary": self._summarize_requirement(requirement),
+            "llm_enhanced_summary": llm_summary.text,
+            "llm_used_real_model": llm_summary.used_real_model,
+            "llm_error": llm_summary.error,
             "domain": domain,
             "dataset_match": match.__dict__,
             "keywords": keywords,
@@ -173,12 +187,19 @@ class {model_name}Service:
     def documentation(self, requirement: str, analysis: dict[str, Any], plan: dict[str, Any], code: str, tests: list[dict[str, str]]) -> dict[str, str]:
         feature_text = ", ".join(analysis["features"])
         module_text = ", ".join(plan["estimated_modules"])
+        fallback_overview = f"This project automates software engineering artifacts for: {requirement}"
+        generated_overview = self.llm.generate(
+            "Create a short professional project overview for this autonomous software engineering system:\n"
+            f"Requirement: {requirement}\nFeatures: {feature_text}\nModules: {module_text}",
+            fallback_overview,
+        )
         return {
-            "overview": f"This project automates software engineering artifacts for: {requirement}",
+            "overview": generated_overview.text,
             "setup": "Install dependencies with `pip install -r requirements.txt` and run `streamlit run app.py`.",
             "modules": f"Main generated modules include {module_text}. Extracted features include {feature_text}.",
             "testing": f"The Testing Agent generated {len(tests)} functional, boundary, integration, and security-oriented test cases.",
             "deployment_notes": "For a production version, connect persistent storage, authentication, CI tests, and a real LLM provider.",
+            "llm_note": f"Documentation provider: {generated_overview.provider}. Real model used: {generated_overview.used_real_model}.",
         }
 
     @staticmethod

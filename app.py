@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import time
 
 import pandas as pd
@@ -117,8 +118,8 @@ def inject_css() -> None:
 
 
 @st.cache_resource
-def get_engine() -> MultiAgentSoftwareEngineer:
-    return MultiAgentSoftwareEngineer()
+def get_engine(provider: str) -> MultiAgentSoftwareEngineer:
+    return MultiAgentSoftwareEngineer(provider)
 
 
 def initialize_state() -> None:
@@ -128,10 +129,12 @@ def initialize_state() -> None:
         st.session_state.result = None
     if "metrics" not in st.session_state:
         st.session_state.metrics = None
+    if "provider" not in st.session_state:
+        st.session_state.provider = "Local Mock LLM"
 
 
 def run_agents(requirement: str, show_progress: bool = True) -> None:
-    engine = get_engine()
+    engine = get_engine(st.session_state.provider)
     if show_progress:
         progress = st.progress(0)
         status = st.empty()
@@ -233,6 +236,16 @@ def home_page() -> None:
 def requirement_input_page() -> None:
     st.title("Requirement Input")
     st.write("Enter a software requirement in natural language. The local ML pipeline will classify, extract, and route it through seven agents.")
+    provider = st.selectbox(
+        "LLM Provider",
+        ["Local Mock LLM", "OpenAI", "Hugging Face"],
+        index=["Local Mock LLM", "OpenAI", "Hugging Face"].index(st.session_state.provider),
+        help="OpenAI uses OPENAI_API_KEY. Hugging Face uses HF_API_TOKEN. Local Mock LLM always works offline.",
+    )
+    st.session_state.provider = provider
+    with st.expander("Provider Setup Status"):
+        st.json(get_engine(provider).llm.status())
+
     requirement = st.text_area(
         "Software Requirement",
         value=st.session_state.requirement,
@@ -260,7 +273,7 @@ def workflow_page() -> None:
     ensure_result()
     st.title("Agent Workflow")
     st.write("Each agent performs one specialized software engineering task and passes structured output to the next agent.")
-    engine = get_engine()
+    engine = get_engine(st.session_state.provider)
     for step, item in enumerate(engine.workflow_results(st.session_state.result), start=1):
         st.markdown(
             f"""
@@ -282,12 +295,35 @@ def output_page() -> None:
     st.title("Final Output")
     st.subheader("Requirement Summary")
     st.info(analysis["summary"])
+    if analysis.get("llm_enhanced_summary"):
+        st.success(f"LLM Enhanced Summary: {analysis['llm_enhanced_summary']}")
+    with st.expander("Provider Status"):
+        st.json(result.get("llm_provider", {}))
+
+    export_col1, export_col2 = st.columns(2)
+    with export_col1:
+        st.download_button(
+            "Download Output JSON",
+            data=json.dumps({"result": result, "metrics": st.session_state.metrics}, indent=2),
+            file_name="multi_agent_output.json",
+            mime="application/json",
+            use_container_width=True,
+        )
+    with export_col2:
+        st.download_button(
+            "Download Output Markdown",
+            data=result_to_markdown(result, st.session_state.metrics),
+            file_name="multi_agent_output.md",
+            mime="text/markdown",
+            use_container_width=True,
+        )
 
     tab_names = [
         "Analysis",
         "Task Breakdown",
         "Generated Code",
         "Test Cases",
+        "Execution",
         "Debugging",
         "Code Review",
         "Documentation",
@@ -319,10 +355,13 @@ def output_page() -> None:
     with tabs[3]:
         st.dataframe(pd.DataFrame(result["tests"]), use_container_width=True, hide_index=True)
     with tabs[4]:
-        st.json(result["debugging"])
+        st.metric("Generated Code Execution", result["execution"]["overall_status"])
+        st.dataframe(pd.DataFrame(result["execution"]["checks"]), use_container_width=True, hide_index=True)
     with tabs[5]:
-        st.json(result["review"])
+        st.json(result["debugging"])
     with tabs[6]:
+        st.json(result["review"])
+    with tabs[7]:
         for title, content in result["documentation"].items():
             st.markdown(f"**{title.replace('_', ' ').title()}**")
             st.write(content)
@@ -365,6 +404,7 @@ def about_page() -> None:
 
     st.subheader("Sample Dataset")
     dataset = pd.read_csv("data/sample_requirements.csv")
+    st.caption(f"Dataset contains {len(dataset)} demonstration requirements across {dataset['domain'].nunique()} domains.")
     st.dataframe(dataset, use_container_width=True, hide_index=True)
 
 
@@ -377,6 +417,7 @@ def sidebar() -> str:
     st.sidebar.divider()
     st.sidebar.caption("Offline compatible: no paid API key required.")
     st.sidebar.caption("ML: TF-IDF, Naive Bayes, cosine similarity, rule-based NLP.")
+    st.sidebar.caption(f"LLM provider: {st.session_state.get('provider', 'Local Mock LLM')}")
     return page
 
 
@@ -400,3 +441,36 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+def result_to_markdown(result: dict, metrics: dict[str, float]) -> str:
+    analysis = result["analysis"]
+    lines = [
+        "# Multi-Agent LLM Generated Output",
+        "",
+        "## Requirement Summary",
+        analysis["summary"],
+        "",
+        "## LLM Enhanced Summary",
+        analysis.get("llm_enhanced_summary", ""),
+        "",
+        "## Extracted Features",
+        *[f"- {feature}" for feature in analysis["features"]],
+        "",
+        "## Task Breakdown",
+        *[f"- **{task['phase']}**: {task['task']}" for task in result["plan"]["tasks"]],
+        "",
+        "## Generated Code",
+        "```python",
+        result["code"],
+        "```",
+        "",
+        "## Test Cases",
+        *[f"- **{item['type']}**: {item['case']} Expected: {item['expected']}" for item in result["tests"]],
+        "",
+        "## Execution Checks",
+        *[f"- {item['check']}: {item['status']} - {item['detail']}" for item in result["execution"]["checks"]],
+        "",
+        "## Evaluation Scores",
+        *[f"- {key}: {value:.2f}%" for key, value in metrics.items()],
+    ]
+    return "\n".join(lines)
+
