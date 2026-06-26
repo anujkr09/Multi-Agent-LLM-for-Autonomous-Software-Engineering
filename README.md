@@ -11,7 +11,7 @@ The project is designed for final-year ML project submission and presentation. I
 - Professional Streamlit dashboard with multiple pages
 - Seven-agent autonomous software engineering workflow
 - Local ML/NLP pipeline using TF-IDF, Naive Bayes, and cosine similarity
-- Optional OpenAI and Hugging Face integration
+- Optional OpenAI, Hugging Face, and Gemini integration
 - Offline-safe mock LLM fallback
 - Generated Python code and test cases
 - Syntax parsing and controlled smoke execution for generated code
@@ -61,7 +61,7 @@ The project is designed for final-year ML project submission and presentation. I
 - Frontend: Streamlit
 - Backend: Python
 - ML/NLP: scikit-learn TF-IDF, Multinomial Naive Bayes, cosine similarity
-- Optional LLMs: OpenAI Responses API, Hugging Face Inference API
+- Optional LLMs: OpenAI Responses API, Hugging Face Inference API, Gemini API
 - Storage: SQLite and CSV dataset
 - Visualization: Plotly
 - Testing: pytest
@@ -78,6 +78,7 @@ The project is designed for final-year ML project submission and presentation. I
 ├── src/
 │   ├── agents.py
 │   ├── code_sandbox.py
+│   ├── env_loader.py
 │   ├── evaluation.py
 │   ├── llm_provider.py
 │   ├── ml_pipeline.py
@@ -126,6 +127,16 @@ Hugging Face:
 setx HF_API_TOKEN "your_token"
 setx HF_MODEL "google/flan-t5-base"
 ```
+
+Gemini:
+
+```powershell
+setx AI_PROVIDER "gemini"
+setx GEMINI_API_KEY "your_api_key"
+setx GEMINI_MODEL "gemini-2.5-flash"
+```
+
+You can also copy `.env.example` to `.env` for local development. The `.env` file is ignored by git.
 
 ## Evaluation Metrics
 

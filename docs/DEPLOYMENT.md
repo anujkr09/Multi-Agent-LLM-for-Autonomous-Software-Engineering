@@ -23,6 +23,14 @@ setx HF_API_TOKEN "your_token"
 setx HF_MODEL "google/flan-t5-base"
 ```
 
+For Gemini:
+
+```powershell
+setx AI_PROVIDER "gemini"
+setx GEMINI_API_KEY "your_api_key"
+setx GEMINI_MODEL "gemini-2.5-flash"
+```
+
 If these keys are not configured, the app uses the Local Mock LLM provider and still works.
 
 ## Streamlit Community Cloud
@@ -31,7 +39,7 @@ If these keys are not configured, the app uses the Local Mock LLM provider and s
 2. Open Streamlit Community Cloud.
 3. Create a new app from the GitHub repository.
 4. Set main file path to `app.py`.
-5. Add optional secrets for `OPENAI_API_KEY` or `HF_API_TOKEN`.
+5. Add optional secrets for `OPENAI_API_KEY`, `HF_API_TOKEN`, or `GEMINI_API_KEY`.
 6. Deploy.
 
 ## Health Check

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 
 import pandas as pd
@@ -8,12 +9,16 @@ import plotly.express as px
 import streamlit as st
 
 from src.agents import MultiAgentSoftwareEngineer
+from src.env_loader import load_dotenv_file
 from src.evaluation import evaluate_pipeline
+from src.llm_provider import normalize_provider
 from src.report_content import PROJECT_REPORT
 from src.storage import load_recent_runs, save_run
 
 
 SAMPLE_REQUIREMENT = "Create a student attendance management system with login, attendance marking, reports, and admin dashboard."
+PROVIDERS = ["Local Mock LLM", "OpenAI", "Hugging Face", "Gemini"]
+load_dotenv_file()
 
 
 st.set_page_config(
@@ -130,7 +135,7 @@ def initialize_state() -> None:
     if "metrics" not in st.session_state:
         st.session_state.metrics = None
     if "provider" not in st.session_state:
-        st.session_state.provider = "Local Mock LLM"
+        st.session_state.provider = normalize_provider(os.getenv("AI_PROVIDER", "Local Mock LLM"))
 
 
 def run_agents(requirement: str, show_progress: bool = True) -> None:
@@ -238,9 +243,9 @@ def requirement_input_page() -> None:
     st.write("Enter a software requirement in natural language. The local ML pipeline will classify, extract, and route it through seven agents.")
     provider = st.selectbox(
         "LLM Provider",
-        ["Local Mock LLM", "OpenAI", "Hugging Face"],
-        index=["Local Mock LLM", "OpenAI", "Hugging Face"].index(st.session_state.provider),
-        help="OpenAI uses OPENAI_API_KEY. Hugging Face uses HF_API_TOKEN. Local Mock LLM always works offline.",
+        PROVIDERS,
+        index=PROVIDERS.index(st.session_state.provider),
+        help="OpenAI uses OPENAI_API_KEY. Hugging Face uses HF_API_TOKEN. Gemini uses GEMINI_API_KEY. Local Mock LLM always works offline.",
     )
     st.session_state.provider = provider
     with st.expander("Provider Setup Status"):
@@ -473,4 +478,3 @@ def result_to_markdown(result: dict, metrics: dict[str, float]) -> str:
         *[f"- {key}: {value:.2f}%" for key, value in metrics.items()],
     ]
     return "\n".join(lines)
-

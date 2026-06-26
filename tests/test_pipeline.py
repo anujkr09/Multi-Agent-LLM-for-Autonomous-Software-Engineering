@@ -5,7 +5,7 @@ import pandas as pd
 from src.agents import MultiAgentSoftwareEngineer
 from src.code_sandbox import run_generated_code_checks
 from src.evaluation import evaluate_pipeline
-from src.llm_provider import LLMProvider
+from src.llm_provider import LLMProvider, normalize_provider
 from src.ml_pipeline import RequirementNLP
 
 
@@ -30,6 +30,12 @@ def test_local_provider_fallback_never_requires_key() -> None:
     response = provider.generate("prompt", "fallback text")
     assert response.text == "fallback text"
     assert response.used_real_model is False
+
+
+def test_provider_aliases_include_gemini() -> None:
+    assert normalize_provider("gemini") == "Gemini"
+    assert normalize_provider("google") == "Gemini"
+    assert LLMProvider("gemini").provider == "Gemini"
 
 
 def test_multi_agent_pipeline_returns_complete_result() -> None:

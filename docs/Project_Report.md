@@ -29,7 +29,7 @@ Research in NLP, transformer models, code generation, and agent-based systems sh
 
 ## Proposed System
 
-The proposed system contains seven agents: Requirement Analysis, Task Planning, Code Generation, Testing, Debugging, Code Review, and Documentation. The application supports local mock LLM responses and optional OpenAI or Hugging Face integration through environment variables.
+The proposed system contains seven agents: Requirement Analysis, Task Planning, Code Generation, Testing, Debugging, Code Review, and Documentation. The application supports local mock LLM responses and optional OpenAI, Hugging Face, or Gemini integration through environment variables.
 
 ## System Architecture
 
