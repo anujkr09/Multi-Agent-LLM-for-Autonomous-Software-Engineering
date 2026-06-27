@@ -413,6 +413,40 @@ def about_page() -> None:
     st.dataframe(dataset, use_container_width=True, hide_index=True)
 
 
+def result_to_markdown(result: dict, metrics: dict[str, float]) -> str:
+    analysis = result["analysis"]
+    lines = [
+        "# Multi-Agent LLM Generated Output",
+        "",
+        "## Requirement Summary",
+        analysis["summary"],
+        "",
+        "## LLM Enhanced Summary",
+        analysis.get("llm_enhanced_summary", ""),
+        "",
+        "## Extracted Features",
+        *[f"- {feature}" for feature in analysis["features"]],
+        "",
+        "## Task Breakdown",
+        *[f"- **{task['phase']}**: {task['task']}" for task in result["plan"]["tasks"]],
+        "",
+        "## Generated Code",
+        "```python",
+        result["code"],
+        "```",
+        "",
+        "## Test Cases",
+        *[f"- **{item['type']}**: {item['case']} Expected: {item['expected']}" for item in result["tests"]],
+        "",
+        "## Execution Checks",
+        *[f"- {item['check']}: {item['status']} - {item['detail']}" for item in result["execution"]["checks"]],
+        "",
+        "## Evaluation Scores",
+        *[f"- {key}: {value:.2f}%" for key, value in metrics.items()],
+    ]
+    return "\n".join(lines)
+
+
 def sidebar() -> str:
     st.sidebar.title("Project Navigation")
     pages = ["Home", "Requirement Input", "Agent Workflow", "Output", "Evaluation", "About Project"]
@@ -446,35 +480,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-def result_to_markdown(result: dict, metrics: dict[str, float]) -> str:
-    analysis = result["analysis"]
-    lines = [
-        "# Multi-Agent LLM Generated Output",
-        "",
-        "## Requirement Summary",
-        analysis["summary"],
-        "",
-        "## LLM Enhanced Summary",
-        analysis.get("llm_enhanced_summary", ""),
-        "",
-        "## Extracted Features",
-        *[f"- {feature}" for feature in analysis["features"]],
-        "",
-        "## Task Breakdown",
-        *[f"- **{task['phase']}**: {task['task']}" for task in result["plan"]["tasks"]],
-        "",
-        "## Generated Code",
-        "```python",
-        result["code"],
-        "```",
-        "",
-        "## Test Cases",
-        *[f"- **{item['type']}**: {item['case']} Expected: {item['expected']}" for item in result["tests"]],
-        "",
-        "## Execution Checks",
-        *[f"- {item['check']}: {item['status']} - {item['detail']}" for item in result["execution"]["checks"]],
-        "",
-        "## Evaluation Scores",
-        *[f"- {key}: {value:.2f}%" for key, value in metrics.items()],
-    ]
-    return "\n".join(lines)

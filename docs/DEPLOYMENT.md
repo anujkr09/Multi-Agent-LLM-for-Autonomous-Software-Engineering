@@ -39,8 +39,10 @@ If these keys are not configured, the app uses the Local Mock LLM provider and s
 2. Open Streamlit Community Cloud.
 3. Create a new app from the GitHub repository.
 4. Set main file path to `app.py`.
-5. Add optional secrets for `OPENAI_API_KEY`, `HF_API_TOKEN`, or `GEMINI_API_KEY`.
-6. Deploy.
+5. Streamlit Cloud will use `runtime.txt` and `requirements.txt` for the Python runtime and packages.
+6. Add optional secrets for `OPENAI_API_KEY`, `HF_API_TOKEN`, or `GEMINI_API_KEY`.
+7. Keep `AI_PROVIDER` as `local` if you want the offline demo, or set it to `openai`, `huggingface`, or `gemini`.
+8. Deploy.
 
 ## Health Check
 

@@ -70,31 +70,32 @@ The project is designed for final-year ML project submission and presentation. I
 
 ```text
 .
-├── app.py
-├── requirements.txt
-├── packages.txt
-├── data/
-│   └── sample_requirements.csv
-├── src/
-│   ├── agents.py
-│   ├── code_sandbox.py
-│   ├── env_loader.py
-│   ├── evaluation.py
-│   ├── llm_provider.py
-│   ├── ml_pipeline.py
-│   ├── report_content.py
-│   └── storage.py
-├── docs/
-│   ├── DEPLOYMENT.md
-│   ├── Project_Report.md
-│   └── system_architecture.mmd
-├── assets/
-│   └── system_architecture.svg
-├── screenshots/
-│   ├── home.svg
-│   ├── output.svg
-│   └── evaluation.svg
-└── tests/
+|-- app.py
+|-- requirements.txt
+|-- packages.txt
+|-- runtime.txt
+|-- data/
+|   `-- sample_requirements.csv
+|-- src/
+|   |-- agents.py
+|   |-- code_sandbox.py
+|   |-- env_loader.py
+|   |-- evaluation.py
+|   |-- llm_provider.py
+|   |-- ml_pipeline.py
+|   |-- report_content.py
+|   `-- storage.py
+|-- docs/
+|   |-- DEPLOYMENT.md
+|   |-- Project_Report.md
+|   `-- system_architecture.mmd
+|-- assets/
+|   `-- system_architecture.svg
+|-- screenshots/
+|   |-- home.svg
+|   |-- output.svg
+|   `-- evaluation.svg
+`-- tests/
 ```
 
 ## Run Locally
