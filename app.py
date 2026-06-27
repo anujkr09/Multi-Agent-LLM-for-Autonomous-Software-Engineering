@@ -33,69 +33,107 @@ def inject_css() -> None:
     st.markdown(
         """
         <style>
+        :root {
+            --bg: #090909;
+            --panel: #15130f;
+            --panel-soft: #1e1a12;
+            --gold: #d4af37;
+            --gold-soft: #f4d875;
+            --gold-deep: #9f7928;
+            --text: #f8f1d8;
+            --muted: #c7b98a;
+            --line: rgba(212, 175, 55, .34);
+            --shadow: rgba(0, 0, 0, .38);
+        }
+        .stApp {
+            background:
+                radial-gradient(circle at 18% 0%, rgba(212, 175, 55, .13), transparent 28rem),
+                linear-gradient(180deg, #090909 0%, #0d0b08 52%, #090909 100%);
+            color: var(--text);
+        }
         .main .block-container {
             padding-top: 1.4rem;
             padding-bottom: 2rem;
             max-width: 1220px;
         }
+        section[data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #0d0b08 0%, #15130f 100%);
+            border-right: 1px solid var(--line);
+        }
+        section[data-testid="stSidebar"] * {
+            color: var(--text);
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--text);
+            letter-spacing: 0;
+        }
+        p, li, label, .stMarkdown, .stCaption, [data-testid="stMarkdownContainer"] {
+            color: var(--text);
+        }
+        .stCaption, .small-muted, [data-testid="stMarkdownContainer"] small {
+            color: var(--muted);
+        }
         .hero {
-            border: 1px solid #dbe4f0;
-            background: linear-gradient(135deg, #ffffff 0%, #eef6ff 52%, #f4fff7 100%);
+            border: 1px solid var(--line);
+            background:
+                linear-gradient(135deg, rgba(244, 216, 117, .16) 0%, rgba(21, 19, 15, .98) 44%, rgba(8, 8, 8, .98) 100%);
             border-radius: 8px;
-            padding: 30px;
+            padding: 32px;
             margin-bottom: 18px;
+            box-shadow: 0 18px 45px var(--shadow);
         }
         .hero h1 {
             margin: 0 0 10px 0;
             font-size: 2.25rem;
-            color: #0f172a;
+            color: var(--gold-soft);
             letter-spacing: 0;
         }
         .hero p {
             margin: 0;
-            color: #334155;
+            color: #f1e7c1;
             font-size: 1.03rem;
             line-height: 1.55;
         }
         .metric-card {
-            border: 1px solid #dbe4f0;
-            background: #ffffff;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #17140f 0%, #0f0e0b 100%);
             border-radius: 8px;
             padding: 16px;
             min-height: 112px;
+            box-shadow: 0 12px 28px var(--shadow);
         }
         .metric-card .label {
-            color: #64748b;
+            color: var(--muted);
             font-size: .82rem;
             text-transform: uppercase;
             letter-spacing: .03em;
         }
         .metric-card .value {
-            color: #0f172a;
+            color: var(--gold-soft);
             font-size: 1.8rem;
             font-weight: 750;
             margin-top: 8px;
         }
         .agent-row {
-            border: 1px solid #dbe4f0;
-            border-left: 5px solid #2563eb;
-            background: #ffffff;
+            border: 1px solid var(--line);
+            border-left: 5px solid var(--gold);
+            background: linear-gradient(90deg, rgba(212, 175, 55, .1), rgba(21, 19, 15, .98));
             border-radius: 8px;
             padding: 14px 16px;
             margin-bottom: 10px;
         }
         .agent-row strong {
-            color: #0f172a;
+            color: var(--gold-soft);
         }
         .agent-row span {
-            color: #475569;
+            color: #eadba9;
             font-size: .92rem;
         }
         .status {
             display: inline-block;
-            background: #dcfce7;
-            color: #166534;
-            border: 1px solid #86efac;
+            background: rgba(212, 175, 55, .16);
+            color: var(--gold-soft);
+            border: 1px solid var(--gold);
             border-radius: 999px;
             padding: 3px 10px;
             font-size: .78rem;
@@ -103,18 +141,84 @@ def inject_css() -> None:
             margin-left: 8px;
         }
         .section-band {
-            border: 1px solid #dbe4f0;
-            background: #ffffff;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, #17140f 0%, #0f0e0b 100%);
             border-radius: 8px;
             padding: 18px;
             margin: 12px 0;
         }
         .small-muted {
-            color: #64748b;
+            color: var(--muted);
             font-size: .92rem;
         }
         div[data-testid="stProgress"] > div > div > div > div {
-            background-color: #2563eb;
+            background-color: var(--gold);
+        }
+        div[data-testid="stProgress"] > div > div > div {
+            background-color: #2a2518;
+        }
+        div[data-testid="stDataFrame"],
+        div[data-testid="stTable"],
+        div[data-testid="stJson"],
+        div[data-testid="stCodeBlock"] {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        div[data-testid="stExpander"] {
+            border: 1px solid var(--line);
+            background: rgba(21, 19, 15, .78);
+            border-radius: 8px;
+        }
+        .stButton > button,
+        .stDownloadButton > button {
+            background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+            color: #11100c;
+            border: 1px solid var(--gold-deep);
+            border-radius: 8px;
+            font-weight: 800;
+            box-shadow: 0 10px 22px rgba(212, 175, 55, .16);
+        }
+        .stButton > button:hover,
+        .stDownloadButton > button:hover {
+            background: linear-gradient(180deg, #ffe891, #d4af37);
+            color: #070707;
+            border-color: var(--gold-soft);
+        }
+        .stTextArea textarea,
+        .stSelectbox div[data-baseweb="select"] > div,
+        .stTextInput input {
+            background-color: #11100c;
+            color: var(--text);
+            border-color: var(--line);
+            border-radius: 8px;
+        }
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 6px;
+            border-bottom: 1px solid var(--line);
+        }
+        .stTabs [data-baseweb="tab"] {
+            background: #15130f;
+            border: 1px solid var(--line);
+            border-bottom: 0;
+            border-radius: 8px 8px 0 0;
+            color: var(--muted);
+            padding: 8px 12px;
+        }
+        .stTabs [aria-selected="true"] {
+            color: #11100c;
+            background: linear-gradient(180deg, var(--gold-soft), var(--gold));
+        }
+        div[data-testid="stMetric"] {
+            background: #15130f;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 14px;
+        }
+        div[data-testid="stAlert"] {
+            background: rgba(212, 175, 55, .12);
+            border: 1px solid var(--line);
+            color: var(--text);
         }
         </style>
         """,
@@ -380,8 +484,25 @@ def evaluation_page() -> None:
     render_metric_cards(metrics)
 
     metric_df = pd.DataFrame({"Metric": list(metrics.keys()), "Score": list(metrics.values())})
-    fig = px.bar(metric_df, x="Metric", y="Score", range_y=[0, 100], text="Score", color="Score", color_continuous_scale="Blues")
-    fig.update_layout(height=420, margin=dict(l=20, r=20, t=35, b=20), showlegend=False)
+    fig = px.bar(
+        metric_df,
+        x="Metric",
+        y="Score",
+        range_y=[0, 100],
+        text="Score",
+        color="Score",
+        color_continuous_scale=["#3a2b0d", "#d4af37", "#f4d875"],
+    )
+    fig.update_layout(
+        height=420,
+        margin=dict(l=20, r=20, t=35, b=20),
+        showlegend=False,
+        paper_bgcolor="#090909",
+        plot_bgcolor="#15130f",
+        font_color="#f8f1d8",
+    )
+    fig.update_xaxes(gridcolor="rgba(212, 175, 55, .18)")
+    fig.update_yaxes(gridcolor="rgba(212, 175, 55, .18)")
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Metric Explanation")
